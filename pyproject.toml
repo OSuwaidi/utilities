@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptool", "wheel"]
-build-backend = "setuptools.build_metadata"
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "my-utils"
