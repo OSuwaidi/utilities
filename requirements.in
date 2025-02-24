@@ -28,6 +28,7 @@ tabulate
 pyodbc
 pipreqs
 pip-review
+git+https://github.com/OSuwaidi/utilities.git@main
 
 # To compile: `$ pip install -U pip-tools` --> `$ pip-compile requirements.in -o requirements.txt`
 # To update the compiled requirements in an existing "requirements.txt" file: `$ pip-compile --upgrade requirements.in`
