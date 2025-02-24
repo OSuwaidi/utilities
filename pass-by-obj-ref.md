@@ -1,0 +1,6 @@
+#  Python’s "pass-by-object-reference" paradigm when passing variables into functions
+When you pass an immutable object to a function in Python, you are actually passing the reference to that object, not a copy of it (pass by value). And as long as you do not attempt to modify that object within the function, the reference points to the original object, and no new object is created. Therefore, you're actually "dealing with" the original object in memory through its reference.
+
+However, if you attempt to **modify** an immutable object within a function, what actually happens is a bit different from mutable objects. Modifying a mutable object doesn't create a new copy, rather it just modifies the original object's value in memory (in-place).
+
+But since immutable objects cannot be changed in memory after they're created, any operation that seems to "modify" the object will actually create a new distinct object (copy) in memory. This new object will then be reassigned to the local variable name within the function's scope. The original object that was passed into the function remains unchanged because it was never modified; instead, a new object was created out of it and referenced by the local variable in the function.

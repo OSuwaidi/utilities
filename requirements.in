@@ -1,0 +1,30 @@
+pyarrow
+polars
+plotly
+bokeh
+panel
+watchfiles
+MissForest
+ruff
+matplotlib
+streamlit
+streamlit_letsplot
+watchdog
+lets-plot
+numpy
+bkmeans
+scikit-learn
+statsmodels
+scipy
+rich
+missingpy
+opencv-python
+openai
+tqdm
+nltk
+tabulate
+pyodbc
+pip-review
+
+# To compile: $ pip install -U pip-tools --> $ pip-compile requirements.in -o requirements.txt
+# To update the compiled requirements in an existing "requirements.txt" file: $ pip-compile --upgrade requirements.in
