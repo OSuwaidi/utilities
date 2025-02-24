@@ -3,7 +3,7 @@ requires = ["setuptools>=65.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "my-utils"
+name = "my-utils"  # package name (label) exposed to PyPI and pip (imported as "my_utils", corresponding to the actual module folder in the "utils" package)
 version = "0.1.0"
 authors = [{ name = "Omar", email = "omar.ali.alsuwaidi@gmail.com" }]
 description = "A versatile Python utility library for efficient data ingestion, preprocessing, post-processing, and wrangling."
