@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptool", "wheel"]
+build-backend = "setuptools.build_metadata"
+
+[project]
+name = "my-utils"
+version = "0.1.0"
+authors = [{ name = "Omar", email = "omar.ali.alsuwaidi@gmail.com" }]
+description = "A versatile Python utility library for efficient data ingestion, preprocessing, post-processing, and wrangling."
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "hummingbird",
+    "lets_plot",
+    "numpy",
+    "panel",
+    "param",
+    "polars",
+    "rich",
+    "scikit_learn",
+    "scipy",
+    "statsmodels",
+    "tqdm"
+]
+
+[project.urls]
+repository = "https://github.com/OSuwaidi/utilities"

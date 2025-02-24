@@ -1,3 +1,5 @@
+# To install this library: `$ pip install git+https://github.com/OSuwaidi/utilities.git@main`
+
 pyarrow
 polars
 plotly
@@ -24,7 +26,9 @@ tqdm
 nltk
 tabulate
 pyodbc
+pipreqs
 pip-review
 
-# To compile: $ pip install -U pip-tools --> $ pip-compile requirements.in -o requirements.txt
-# To update the compiled requirements in an existing "requirements.txt" file: $ pip-compile --upgrade requirements.in
+# To compile: `$ pip install -U pip-tools` --> `$ pip-compile requirements.in -o requirements.txt`
+# To update the compiled requirements in an existing "requirements.txt" file: `$ pip-compile --upgrade requirements.in`
+# To use `pipreqs`: `$ pipreqs /path/to/your/project` to generate a "requirements.txt" with the detected non-standard libraries
