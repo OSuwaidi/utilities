@@ -1,6 +1,6 @@
-[build-system]
-requires = ["setuptools>=65.0", "wheel"]
-build-backend = "setuptools.build_meta"
+[build-system]  # configuration: defines how the package should be built
+requires = ["setuptools>=65.0", "wheel"]  # tools (dependencies) required to build the package
+build-backend = "setuptools.build_meta"  # which tool should be used as the build system
 
 [project]
 name = "my-utils"  # package name (label) exposed to PyPI and pip (imported as "my_utils", corresponding to the actual module folder in the "utils" package)
