@@ -9,7 +9,7 @@ PORT = 4221
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Server that handles requests.")
+    parser = argparse.ArgumentParser(description="A TCP server that handles basic requests.")
     parser.add_argument(
         "--directory",
         type=str,
@@ -20,13 +20,14 @@ def main() -> None:
     # Parse the command-line arguments:
     cli_args = parser.parse_args()
 
-    # Create a TCP/IP server socket (endpoint), bind it to a specified host and port, then put it into listening mode:
-    with socket.create_server((HOST, PORT),) as server:  # create the server socket "within" a context manager. note: Windows doesn't support process port-sharing (can't set reuse_port=True)
+    # Create a TCP/IP server socket (endpoint), bind it to a specified host and port, then put it into listening mode
+    # Note: Windows doesn't support process port-sharing (can't set reuse_port=True)
+    with socket.create_server((HOST, PORT),) as server:  # create the server socket "within" a context manager
         print(f"Server listening on {HOST}:{PORT}\n")
 
         while True:  # keep listening...
             # Accept and establish a connection:
-            connection, address = server.accept()  # blocking call; continuously waits (hangs) until a client connects
+            connection, address = server.accept()  # blocking call (similar to input()); continuously waits (hangs) until a client connects
             # Each client's connection reruns this entire script, hence, it also instantiates a new, separate thread per connection!
             Thread(target=handle_connection, args=(connection, address, cli_args)).start()
 
@@ -88,7 +89,7 @@ def handle_connection(connection: socket, address: tuple, args: argparse.Namespa
                 file.write(request_body)
                 http_response = response_template(status="201 Created")
 
-        connection.sendall(http_response)  # blocking call; waits for the network to transmit data to the client
+        connection.sendall(http_response)  # blocking call; waits fgitor the network to transmit data to the client
 
 
 def response_template(status: str = "200 OK", content_type: str = "text/plain", content: str | None = None) -> bytes:
