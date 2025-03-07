@@ -31,9 +31,13 @@
 <u>To print a list of all currently tracked files in your git repo</u>:<br>
 `$ git ls-files`
 
-<u>To stop tracking a file in Git while keeping it in your local directory</u>:<br>
+<u>To stop tracking a file and remove it from remote repo while keeping it in your local directory</u>:<br>
 `$ git rm --cached -r <file_name.ext>`<br>
-(the `-r` option is used to *recursively* remove files in a directory, and the `—cached` option ensures that the files are only removed from the Git index, not your local file system)
+(the `-r` option is used to *recursively* remove files in a directory)<br>
+(the `—cached` option ensures that the files are only removed from the Git index (staging area), not your local file system)
+
+<u>To keep a file unchanged in the remote repo (never pushed) while allowing local changes</u>:
+`$ git update-index --assume-unchanged <file.ext>`
 
 <u> To set a name and email (author) for each commit globally (for all repos on machine)</u>:
 
@@ -88,8 +92,11 @@
 <u>To list all local and available remote branches</u>:
 `$ git branch -a`
 
-<u>To rename a branch</u>:<br>
-`$ git branch -m <old_name> <new_name>`
+<u>To rename a branch (useful to match local repo's branch name with remote's for direct push/pull)</u>:<br>
+`$ git branch -m <old_name> <new_name>
+
+<u>To push into a remote branch that has a different name than the current local branch</u>:<br>
+`$ git push <origin> <local_branch>:<remote_branch>`
 
 <u>To delete a branch that you're not currently on</u>:<br>
 `$ git branch -d <branch_name>`
