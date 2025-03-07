@@ -5,6 +5,7 @@ polars
 plotly
 bokeh
 panel
+pympler  # useful for monitoring and analyzing memory footprint of Python objects
 watchfiles
 MissForest
 ruff
