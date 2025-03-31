@@ -1,4 +1,4 @@
-# Set the maximum line length to 187:
+# Set the maximum line length to 190:
 line-length = 190
 indent-width = 4  # default anyways
 target-version = "py312"
@@ -10,3 +10,4 @@ indent-style = "space"  # indent with spaces, rather than tabs.
 # [lint]
 # Add the `line-too-long` rule to the enforced rule set:
 # extend-select = ["E501"]
+# ignore = []

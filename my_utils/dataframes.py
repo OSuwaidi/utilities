@@ -34,7 +34,6 @@ class NumericalScaler(StandardScaler):
 
         return boolean_wrapper
 
-
     @_check_if_pl_df
     def fit(self, train_df: pl.DataFrame) -> None:  # new ".fit()" method overrides parent's ".fit()" method
         super().fit(train_df.select(cs.numeric()))  # use the parent class' ".fit()" method
