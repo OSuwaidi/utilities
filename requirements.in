@@ -1,4 +1,4 @@
-# To install this library: `$ pip install git+https://github.com/OSuwaidi/utilities.git@main`
+# To install this (utilities) library: `$ pip install git+https://github.com/OSuwaidi/utilities.git@main`
 
 pyarrow
 polars
@@ -31,6 +31,6 @@ pipreqs
 pip-review
 git+https://github.com/OSuwaidi/utilities.git@main
 
-# To compile: `$ pip install -U pip-tools` --> `$ pip-compile requirements.in -o requirements.txt`
-# To update the compiled requirements in an existing "requirements.txt" file: `$ pip-compile --upgrade requirements.in`
+# To compile this file: `$ pip install -U pip-tools` --> `$ pip-compile requirements.in -o requirements.txt`
+# To update an already compiled "requirements.txt" file: `$ pip-compile --upgrade requirements.in`
 # To use `pipreqs`: `$ pipreqs /path/to/your/project` to generate a "requirements.txt" with the detected non-standard libraries
