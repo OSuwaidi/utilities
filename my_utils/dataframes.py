@@ -127,21 +127,17 @@ type ColumnTypes = tuple[object] | list[object] | object
 
 
 def optimize_dtypes(df: pl.DataFrame, save_parquet_path: str | None = None, *, ignore_columns: ColumnNames = (), ignore_types: ColumnTypes = ()) -> pl.DataFrame:
-    optimized_dtypes: dict[str, type] = {}
+    optimized_dtypes: dict[str, pl.DataTypeClass] = {}
     df_interest = df.drop(ignore_columns)
 
     if not isinstance(ignore_types, tuple | list):
         ignore_types = (ignore_types,)
 
-    numeric_ranges = (
-        (pl.UInt8, 0, np.iinfo(np.uint8).max),
-        (pl.UInt16, 0, np.iinfo(np.uint16).max),
-        (pl.UInt32, 0, np.iinfo(np.uint32).max),
-        (pl.Int8, np.iinfo(np.int8).min, np.iinfo(np.int8).max),
-        (pl.Int16, np.iinfo(np.int16).min, np.iinfo(np.int16).max),
-        (pl.Int32, np.iinfo(np.int32).min, np.iinfo(np.int32).max),
-        (pl.Float32, np.finfo(np.float32).min, np.finfo(np.float32).max),
-    )
+    type_min: Callable[[pl.DataTypeClass], int] = lambda pl_type: pl.select(pl_type.min()).item()
+    type_max: Callable[[pl.DataTypeClass], int] = lambda pl_type: pl.select(pl_type.max()).item()
+
+    u_ints = (pl.UInt8, pl.UInt16, pl.UInt32)
+    ints = (pl.Int8, pl.Int16, pl.Int32)
 
     # Process numerical columns:
     if int not in ignore_types:
@@ -149,39 +145,39 @@ def optimize_dtypes(df: pl.DataFrame, save_parquet_path: str | None = None, *, i
             min_val, max_val = series
 
             if min_val >= 0:  # if unsigned integers:
-                for dtype_range in numeric_ranges[:3]:
-                    if min_val >= dtype_range[1] and max_val <= dtype_range[2]:
-                        optimized_dtypes[series.name] = dtype_range[0]
+                for uint_type in u_ints:
+                    if max_val <= type_max(uint_type):
+                        optimized_dtypes[series.name] = uint_type
                         break
                 else:  # will only be triggered if the "for" loop completed normally, i.e., without encountering a "break"
                     optimized_dtypes[series.name] = pl.UInt64
 
             else:  # if signed integers:
-                for dtype_range in numeric_ranges[3:6]:
-                    if min_val >= dtype_range[1] and max_val <= dtype_range[2]:
-                        optimized_dtypes[series.name] = dtype_range[0]
+                for int_type in ints:
+                    if min_val >= type_min(int_type) and max_val <= type_max(int_type):
+                        optimized_dtypes[series.name] = int_type
                         break
                 else:
                     optimized_dtypes[series.name] = pl.Int64
 
     if float not in ignore_types:
         for series in pl.concat((df_interest.select(cs.float().min()), df_interest.select(cs.float().max()))):  # vertical concatenation (by default)
-            min_val, max_val = series[0], series[1]
+            min_val, max_val = series
 
-            if min_val >= numeric_ranges[-1][1] and max_val <= numeric_ranges[-1][2]:
-                optimized_dtypes[series.name] = numeric_ranges[-1][0]
+            if min_val >= np.finfo(np.float32).min.item() and max_val <= np.finfo(np.float32).max.item():
+                optimized_dtypes[series.name] = pl.Float32
             else:
                 optimized_dtypes[series.name] = pl.Float64
 
     # Process string and object columns:
     if str not in ignore_types:
         for series in df_interest.select(cs.string() | cs.object()):
-            if series.n_unique() < 0.6 * series.len():  # if 40% or more of the data contains duplicates (entirely repeated cells (entries)):
+            if series.n_unique() / series.len() < 0.6:  # if 40% or more of the data contains duplicates (entirely repeated cells (entries)):
                 optimized_dtypes[series.name] = pl.Categorical
 
-    # "df" below (after assigning) will be different from the original "df" passed into the function; it will be a new, locally defined variable
-    # "df" on the left will be different in memory (diff "id()") compared to "df" on the right
-    df = df.with_columns(pl.col(column).cast(dtype) for column, dtype in optimized_dtypes.items())  # overwrite the columns
+    # "df" below (after assignment) will be different from the original "df" passed into the function; it will be a new copy of locally defined variable
+    # "df" on the left will be different in memory "id()" compared to "df" on the right
+    df = df.cast(optimized_dtypes)  # overwrite the columns
 
     if save_parquet_path:
         file_path, ext = splitext(save_parquet_path)
