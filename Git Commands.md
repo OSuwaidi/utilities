@@ -48,10 +48,10 @@
 `$ git commit -m “Some message to display with commit”`
 
 <u>To add **and** commit all tracked files (modified or deleted) in one step</u>:<br>
-`$ git commit -am “Some message to display with commit”`
+`$ git commit -am “<Some message to display with commit>”`
 
 <u>To create annotated tags (package versions) and associate them with your commits</u>:<br>
-`$ git tag -a v0.1.0 -m "` -> `$ git push origin main --tags`
+`$ git tag -a v0.1.0 -m "<some_message>"` -> `$ git push origin main --tags`
 
 <u>To optimize the local repository by cleaning up (garbage collecting) unnecessary files and optimizing the local storage of the repository data</u>:<br>
 `$ git gc`
