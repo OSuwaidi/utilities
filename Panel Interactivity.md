@@ -2,11 +2,11 @@
 1. Using `@pn.depends` (*declarative* approach):
     `@pn.depends(p1.param.att1, p2.param.att2, ..., watch: bool, on_init: bool)` declares that the decorated function depends on parameter objects `p1` and `p2`,
     such that any changes to `att1` or `att2`, respectively, will automatically trigger a `func(p1.att1, p2.att2, ...)` function call (callback). It is best used to:
-        1. build reactive UIs, where the decorated function's return is used for front-side rendering (Panel components, plot, table, text)
-        2. perform side effects depending on many different parameter objects, such as:
-            1. updating or mutating other objects' state(s)
-            2. reaching out for DB, trigger external API, etc.
-            3. logging or storing data
+   1. build reactive UIs, where the decorated function's return is used for front-side rendering (Panel components, plot, table, text)
+   2. perform side effects depending on many different parameter objects, such as:
+      1. updating or mutating other objects' state(s)
+      2. reaching out for DB, trigger external API, etc.
+      3. logging or storing data
 * **Note**: It's almost always better to create a parameterized object representing the state (which has its Param dependencies indirectly via `pn.depends`) that stores your value then updating/mutating it via `pn.depends(..., watch=Tue)` (eagerly as a side effect), rather than returning the value directly from a `pn.depends(..., watch=False)`-decorated function. That's because:
   1. it's more efficient as it updates only the specific Parameters that are being changed rather than rendering reactive functions directly.
   2. without `watch=True`, the reactivity is deferred and the callback is *only* triggered when the decorated-function is used for rendering UI components (when laid out).
