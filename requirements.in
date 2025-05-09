@@ -3,6 +3,8 @@
 
 pyarrow
 polars
+xlsxwriter
+fastexcel
 plotly
 bokeh
 panel
@@ -25,6 +27,7 @@ missingpy
 opencv-python
 openai
 tqdm
+python-dotenv
 nltk
 tabulate
 pyodbc
