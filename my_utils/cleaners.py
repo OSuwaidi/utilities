@@ -3,7 +3,7 @@ from unicodedata import normalize
 
 
 def replace_values(name: str, mapping: dict[str, str]) -> str:
-    """Replace string values in the column name.
+    """Replace specified string values in the given column name based on a dictionary mapping.
 
     Parameters
     ----------
@@ -83,15 +83,15 @@ def rename_duplicates(names: list, case: str) -> list:
 
 
 def clean_columns(
-    arr: list[str, ...] | tuple[str, ...],
+    col_input: str | list[str] | tuple[str, ...],
     case: str = "snake",
     replace: dict[str, str] | None = None,
     remove_accents: bool = True,
-) -> list[str, ...] | tuple[str, ...]:
+) -> str | list[str] | tuple[str, ...]:
     """Clean column names from a given list.
 
     Args:
-        arr (list[str, ...] or tuple[str, ...], required): The array of string(s) to be cleaned
+        col_input (str or list[str, ...] or tuple[str, ...], required): The string or array of string(s) to be cleaned
         case (str, optional): The desired case style of the column name. Defaults to "snake".
 
                 - 'snake': 'column_name'
@@ -106,13 +106,21 @@ def clean_columns(
 
         remove_accents (bool, optional): If True, strip accents from the column names. Defaults to True.
     """
+    if isinstance(col_input, str):
+        if replace:
+            col_input = replace_values(col_input, replace)
+
+        if remove_accents:
+            col_input = _remove_accents(col_input)
+
+        return convert_case(col_input, case)
 
     if replace:
-        arr = [replace_values(ele, replace) for ele in arr]
+        col_input = (replace_values(ele, replace) for ele in col_input)
 
     if remove_accents:
-        arr = [_remove_accents(ele) for ele in arr]
+        col_input = (_remove_accents(ele) for ele in col_input)
 
-    arr = [convert_case(ele, case) for ele in arr]
+    col_input = [convert_case(ele, case) for ele in col_input]
 
-    return rename_duplicates(arr, case)
+    return rename_duplicates(col_input, case)
