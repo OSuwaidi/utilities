@@ -1,0 +1,20 @@
+{
+    "python.defaultInterpreterPath": "/Users/oalsuwaidi/Documents/Python/py3/bin/python3.12",
+    "terminal.integrated.windowsEnableConpty": false,
+    "telemetry.telemetryLevel": "crash",
+    "git.enabled": false,
+    "extensions.ignoreRecommendations": true,
+    "workbench.startupEditor": "none",
+    "jupyter.widgetScriptSources": [
+        "jsdelivr.com",
+        "unpkg.com"
+    ],
+    "security.workspace.trust.untrustedFiles": "open",
+    "chat.commandCenter.enabled": false,
+    "SQL-Formatter-VSCode.dialect": "postgresql",
+    "SQL-Formatter-VSCode.linesBetweenQueries": 2,
+    "SQL-Formatter-VSCode.newlineBeforeSemicolon": true,
+    "editor.minimap.enabled": false,
+    "editor.renderControlCharacters": false,
+    "editor.renderWhitespace": "none",
+}

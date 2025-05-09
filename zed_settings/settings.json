@@ -1,0 +1,48 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+    "base_keymap": "JetBrains",
+    "ui_font_size": 15.5,
+    "buffer_font_size": 13.5,
+    "confirm_quit": true,
+    // "restore_on_startup": "last_workspace",
+    "show_whitespaces": "none",
+  
+    "features": {
+      "edit_prediction_provider": "none"
+    },
+    "telemetry": {
+      "diagnostics": false,
+      "metrics": false
+    },
+    "assistant": {
+      "enabled": false,
+      "button": false
+    },
+    "notification_panel": {
+      "button": false
+    },
+    "theme": {
+      "mode": "system",
+      "light": "XY-Zed",
+      "dark": "One Dark"
+    },
+    "toolbar": {
+      "breadcrumbs": false,
+      "quick_actions": false,
+      "selections_menu": false
+    },
+    "collaboration_panel": {
+      "button": false
+    },
+    "outline_panel": {
+      "button": false
+    }
+  }
+  
