@@ -27,7 +27,6 @@ missingpy
 opencv-python
 openai
 tqdm
-python-dotenv
 nltk
 tabulate
 pyodbc

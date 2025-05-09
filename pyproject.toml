@@ -3,8 +3,8 @@ requires = ["setuptools>=65.0", "wheel"]  # tools (dependencies) required to bui
 build-backend = "setuptools.build_meta"  # which tool should be used as the build system
 
 [project]
-name = "my-utils"  # package name (label) exposed to PyPI and pip (imported as "my_utils", corresponding to the actual module's folder name in the "utilities" package)
-version = "0.1.4"  # must update version number here to reflect repo updates from "pip install ..."
+name = "my-utils"  # package name (label) exposed to PyPI and pip (imported as "my_utils", corresponding to the actual module's (folder) name in the "utilities" package/repo)
+version = "0.1.7"  # must update version number here to reflect repo updates from "pip install ..."
 authors = [{ name = "Omar", email = "omar.ali.alsuwaidi@gmail.com" }]
 description = "A versatile Python utility library for efficient data ingestion, preprocessing, post-processing, and wrangling."
 classifiers = [
@@ -28,3 +28,9 @@ dependencies = [
 
 [project.urls]
 repository = "https://github.com/OSuwaidi/utilities"
+
+# Tell setuptools where to look in the repo and which top-level directory to treat as a package (restrict package discovery):
+[tool.setuptools.packages.find]
+where   = ["."]  # can also create a "src/" dircetory and look there instead
+include = ["my_utils*"]  # only package "my_utils" root package and its subpackages "*"
+exclude = ["editor_settings*"]
