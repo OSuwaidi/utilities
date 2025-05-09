@@ -141,8 +141,9 @@ def optimize_dtypes(df: pl.DataFrame, save_parquet_path: str | None = None, *, i
 
     # Process numerical columns:
     if int not in ignore_types:
-        for series in pl.concat((df_interest.select(cs.integer().min()), df_interest.select(cs.integer().max()))):  # vertical concatenation (by default)
-            min_val, max_val = series
+        for series in df_interest.select(pl.struct(pl.min(col), pl.max(col).alias('max')) for col in df_interest.select(cs.numeric()).columns):
+            # "series" here is single entry (one row) "pl.Series" containing a dictionary, where keys are column names and values are the corresponding aggregates
+            min_val, max_val = series[0].values()  # access the first entry (row) of the series, then get the dictionary values
 
             if min_val >= 0:  # if unsigned integers:
                 for uint_type in u_ints:
@@ -161,8 +162,8 @@ def optimize_dtypes(df: pl.DataFrame, save_parquet_path: str | None = None, *, i
                     optimized_dtypes[series.name] = pl.Int64
 
     if float not in ignore_types:
-        for series in pl.concat((df_interest.select(cs.float().min()), df_interest.select(cs.float().max()))):  # vertical concatenation (by default)
-            min_val, max_val = series
+        for series in df_interest.select(pl.struct(pl.min(col), pl.max(col).alias('max')) for col in df_interest.select(cs.float() | cs.decimal()).columns):
+            min_val, max_val = series[0].values()
 
             if min_val >= np.finfo(np.float32).min.item() and max_val <= np.finfo(np.float32).max.item():
                 optimized_dtypes[series.name] = pl.Float32

@@ -5,7 +5,6 @@ from sklearn.inspection import permutation_importance
 from sklearn.ensemble import ExtraTreesRegressor
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
-from scipy.stats import gamma
 from datetime import date
 from tqdm import trange
 from rich import print
@@ -78,22 +77,57 @@ class ExogArima:
 
 
 def predict_churn(df: pl.DataFrame, date_column: str, sort: bool = False) -> float:
-    assert isinstance(df[date_column].dtype, (pl.Date, pl.Datetime)), f"Expected type {pl.Date, pl.Datetime}, got {df[date_column].dtype} instead."
+    """
+    Predicts a customer's probability of churning, given the dates of his events (e.g. transactional) history.
 
-    if isinstance(df[date_column].dtype, pl.Datetime):
-        df = df.with_columns(pl.col(date_column).cast(pl.Date))
+    Parameters
+    ----------
+    df
+        A polars dataframe.
+    date_column
+        The name of the date column indicating when an event (e.g. transaction) has occurred.
+    sort
+        Whether or not to sort the given dataframe based on dates in ascending order.
+
+    Returns
+    -------
+    float
+        The probability value [0, 1) of a customer churning.
+    """
+    event_dates: pl.DataFrame = df[[date_column]]
+    assert isinstance(event_dates.dtypes[0], (pl.Date, pl.Datetime)), f"Expected type {pl.Date, pl.Datetime}, got {event_dates.dtypes[0]} instead."
+
+    if isinstance(event_dates.dtypes[0], pl.Datetime):
+        event_dates = event_dates.cast(pl.Date)
 
     if sort:  # the dataframe's date column MUST be sorted in ascending order!
-        last_date = df[date_column].sort()[-1]
-    else:
-        last_date = df[date_column][-1]
+        event_dates = event_dates.sort(date_column)
 
-    days_since_last_event: int = (date.today() - last_date).days
-    days_diff: pl.Series = df[date_column].diff()[1:].dt.total_days()
-    days_diff = days_diff.filter(days_diff != 0)  # remove transactions that occurred on the same day
-    if days_diff.is_empty():  # if a single transaction:
+    last_date: date = event_dates[-1].item()
+    today: date = date.today()
+    days_since_last_event: int = (today - last_date).days
+    if days_since_last_event == 0:
+        return 0.
+
+    event_dates: pl.DataFrame = event_dates.with_columns(
+        pl.col(date_column).diff()
+        .dt.total_days()
+        .alias("dates_diff")
+    )[1:]
+    event_dates = event_dates.filter(pl.col("dates_diff") != 0)  # remove events that occurred on the same day
+
+    if event_dates.is_empty():  # if a single event occurred, or events all occurred on the same day:
+        # TODO: maybe return a probability based on similar existing customers since we have no prior about this customer
         return days_since_last_event / (1 + days_since_last_event)
-    if days_diff.std() == 0 or (days_diff.len() == 1):  # if all transactions are on the same date or single difference info:
-        return days_since_last_event / (days_diff[0] + days_since_last_event)
-    params = gamma.fit(days_diff)  # returns 3 distribution parameters: (shape, location, scale)
-    return gamma.cdf(days_since_last_event, *params)  # computes the integral from 0 to "x"
+
+    if not event_dates["dates_diff"].var():  # if all event occurrences are evenly spaced (constant or single days value difference) ==> var ∈ {0, None}
+        return days_since_last_event / (event_dates["dates_diff"][0] + days_since_last_event)
+
+    weights_exp: pl.Expr = (pl.lit(1.) / (today - pl.col(date_column)).dt.total_days())
+    event_dates = event_dates.with_columns(
+        (weights_exp / weights_exp.sum())
+        .alias("weights")
+    )
+
+    expected_diff: int = (event_dates["dates_diff"] * event_dates["weights"]).sum()  # breaks the memoryless property (probability depends on previous events)
+    return days_since_last_event / (expected_diff + days_since_last_event)

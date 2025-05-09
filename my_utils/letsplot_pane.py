@@ -18,13 +18,14 @@ class LetsPlotPane(ReactiveHTML):
     # Param objects are initialized and bound (to instances) upon object instantiation
     plot_object = param.ClassSelector(class_=PlotSpec, precedence=-1)  # default = None
     sizing_options = param.Dict(default={"width_mode": "fit", "height_mode": "fit"})
+    plot_size = param.Dict(default={"width": "100%", "height": "100%"})
     plot_uri = param.String()  # default = ""
 
     _template = """
     <iframe
         id="pn-container"
         src="data:text/html;base64,${plot_uri}"
-        style="height:1.8vh; width:42vw; border: none;">
+        style="height:${plot_size["height"]}; width:${plot_size["width"]}; border: none;">
     </iframe>
     """  # HTML template that gets rendered and declares how the sublass' parameters are linked to HTML
 
@@ -41,7 +42,7 @@ class LetsPlotPane(ReactiveHTML):
             elif isinstance(data, pd.DataFrame):
                 spec["data"] = data.to_dict(orient="list")
 
-        display_html: str = _generate_display_html_for_raw_spec(spec, sizing_options=self.sizing_options, responsive=True)
+        plot_html: str = _generate_display_html_for_raw_spec(spec, sizing_options=self.sizing_options, responsive=True)
 
-        plot_html_bytes = _config_html + display_html.encode("utf-8")
+        plot_html_bytes = _config_html + plot_html.encode("utf-8")
         self.plot_uri = base64.b64encode(plot_html_bytes).decode("utf-8")
