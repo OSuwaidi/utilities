@@ -31,12 +31,14 @@ ENV NAME="Hello, World" MODE=production PORT=8000
 CMD sh -c 'python3 -m streamlit run scripts/app1.py --server.port 8000 --server.address=0.0.0.0 & python3 -m panel serve scripts/app2.py --port 5006 --address 0.0.0.0 --allow-websocket-origin=*'
 ```
 ### Important notes:
-- `--server.address`: specifies which IP address your app/server is allowed to listen to (accept connections from).
-It can be set to a LAN IP (same public IPv4) address, making it only reachable via that LAN IP (whitelist one IP to represent the whole LAN).
+- `--server.address`: specifies which IP address(s) your app/server is allowed to listen to (accept connections from).
+It can be set to a LAN IP (same public IPv4 for multiple devices) address, making it only reachable via that LAN IP (whitelist one IP to represent the whole LAN).
 If set to `0.0.0.0`, it listens to all IPs (accepts connections from all external clients).
 - `--allow-websocket-origin`: specifies which origins (protocol + domain) are allowed to open WebSocket connections to your app.
 Relevant when accessing the app indirectly (not via raw IP), via a reverse proxy (domain name or intermediate server).
-E.g. If the app is served at: `http://some.domain.com/yourapp`, WebSocket connection will be rejected without: `--allow-websocket-origin=some.domain.com`.
+E.g. If the app is served at: `http://some.domain.com/yourapp:port_num`, WebSocket connections will be rejected without: `--allow-websocket-origin=some.domain.com:port_num`.
+By default, the only allowed origin is: `localhost:5006`, hence if you change the `--server.address`, you have to `--allow-websocket-origin=--server.address:port_num`.
+To allow multiple origins: `--allow-websocket-origin=192.168.x.x:5006,localhost:5006`.
 
 2. Then you need to create a `.dockerignore` file (similar to `.gitignore`) to exclude certain files/folders from being copied into the image, reducing image size and speeding up build.
 
