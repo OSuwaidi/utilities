@@ -4,8 +4,8 @@ import polars.selectors as cs
 import numpy as np
 from os.path import splitext, abspath
 from warnings import warn
-from typing import Callable, Self
-from sklearn.preprocessing import StandardScaler
+from typing import Callable, Self, Literal, Iterable
+from sklearn.preprocessing import StandardScaler, RobustScaler
 
 
 def smart_drop(df: pl.DataFrame) -> pl.DataFrame:
@@ -23,35 +23,64 @@ def smart_drop(df: pl.DataFrame) -> pl.DataFrame:
     return df
 
 
-class NumericalScaler(StandardScaler):
+class NumericalScaler:
+    # TODO: enable inverse transformation
+    def __init__(self, *, kind: Literal["robust", "standard"]):
+        if kind not in {"robust", "standard"}:
+            raise ValueError("kind must be 'robust' or 'standard'")
+
+        self.ignore_cols = ()
+        self.scaler = RobustScaler() if kind == "robust" else StandardScaler()
+
+    def __getattr__(self, name: str):
+        # Only called if attribute "name" isn't found on self (the instance)
+        return getattr(self.scaler, name)
+
+    def __dir__(self):
+        # include class' own attributes + all of scaler’s to give attrs visibility for IDE support (tab-completion)
+        return list(super().__dir__()) + [a for a in dir(self.scaler) if not a.startswith("_")]
+
     @staticmethod
     def _check_if_pl_df(method: Callable) -> Callable:
         @wraps(method)
-        def boolean_wrapper(self, df: pl.DataFrame) -> pl.DataFrame | None:
+        def check_wrapper(self, df: pl.DataFrame, *args, **kwargs) -> pl.DataFrame | None:
             if not isinstance(df, pl.DataFrame):  # better than "assert" because it checks if object is instance of class or subclass of that class as well!
                 raise TypeError(f"Expected type {pl.DataFrame}, found {type(df)} instead.")
-            return method(self, df)
+            return method(self, df, *args, **kwargs)
 
-        return boolean_wrapper
+        return check_wrapper
 
     @_check_if_pl_df
-    def fit(self, train_df: pl.DataFrame) -> None:  # new ".fit()" method overrides parent's ".fit()" method
-        super().fit(train_df.select(cs.numeric()))  # use the parent class' ".fit()" method
+    def fit(self, train_df: pl.DataFrame, ignore_cols: Iterable[str] | str = ()) -> None:  # new ".fit()" method overrides parent's ".fit()" method
+        self.ignore_cols = ignore_cols
+        self.scaler.fit(
+            train_df.select(cs.numeric()).drop(ignore_cols)
+        )
 
     @_check_if_pl_df
     def transform(self, target_df: pl.DataFrame) -> pl.DataFrame:
-        transformed_data: np.ndarray = super().transform(target_df.select(cs.numeric()))
-        transformed_data: pl.DataFrame = pl.DataFrame(transformed_data, schema=self.feature_names_in_.tolist()).with_columns(cs.numeric().fill_nan(None))
-        return pl.concat((transformed_data, target_df.select(~cs.numeric())), how="horizontal")
+        transformed_data: np.ndarray = self.scaler.transform(
+            target_df.select(cs.numeric()).drop(self.ignore_cols)
+        )
+        transformed_data: pl.DataFrame = (pl.DataFrame(transformed_data, schema=self.feature_names_in_.tolist())
+                                          .with_columns(cs.numeric().fill_nan(None))
+                                          )
+        return pl.concat(
+            (
+                transformed_data, target_df.select(~cs.numeric(), pl.col(self.ignore_cols or ()))
+            ), how="horizontal")
 
     @_check_if_pl_df
-    def fit_transform(self, df: pl.DataFrame) -> pl.DataFrame:
-        self.fit(df)
+    def fit_transform(self, df: pl.DataFrame, ignore_cols: Iterable[str] | str = ()) -> pl.DataFrame:
+        self.fit(df, ignore_cols)
         return self.transform(df)
 
 
 class CategoricalEncoder:
-    type ClassMethod = Callable[[Self, pl.DataFrame], pl.DataFrame | None]  # a type alias (cannot be used within "isinstance()")
+    # TODO: enable inverse transformation (number -> category)
+    # TODO: Fix when using FIT_TRANSFORM AGAIN
+    # TODO: DATA NEEDS TO BE ON SAME SCALE BEFORE BEING USED FOR ENCODING
+    type ClassMethod = Callable[[Self, pl.DataFrame, ...], pl.DataFrame | None]  # a type alias (cannot be used within "isinstance()")
 
     # ***note***: it is more performant to scale the numerical features first before using the categorical encoder
     def __init__(self, *, encode_nulls: bool):  # force the argument to be passed as a keyword argument
@@ -61,65 +90,49 @@ class CategoricalEncoder:
     @staticmethod
     def _check_4_str_cols(method: ClassMethod) -> ClassMethod:
         @wraps(method)
-        def warn_wrapper(self, df: pl.DataFrame) -> pl.DataFrame | None:
+        def warn_wrapper(self, df: pl.DataFrame, *args, **kwargs) -> pl.DataFrame | None:
             if not df.select(cs.string()).is_empty():
                 warn(
-                    f"Dataframe contains column(s): {df.select(cs.string()).columns} of type {str}! String columns will not be included in the encoding. Cast them into type category ({pl.Categorical}) first.",
+                    f"""Dataframe contains column(s): {df.select(cs.string()).columns} of type string!
+                    String columns will be included in the encoding by being cast into type category ({pl.Categorical}) first.""",
                     UserWarning,
                 )
 
-            return method(self, df)  # returns the *evaluation* of the class's method
+            return method(self, df, *args, **kwargs)  # returns the *evaluation* of the class's method
 
         return warn_wrapper
 
     @_check_4_str_cols
     def fit(self, train_df: pl.DataFrame) -> None:
-        for column in (categorical_cols := train_df.select(cs.categorical()).columns):
-            if not self.encode_nulls:
-                df_worked = train_df.filter(pl.col(column).is_not_null())
-            else:
-                df_worked = train_df
+        if train_df.select(cs.numeric()).is_empty():
+            raise ValueError("DataFrame contains no numeric columns to fit the scaler.")
 
-            df_worked = df_worked.group_by(column).agg(
-                (~cs.by_name(categorical_cols) & cs.numeric()).mean()  # do not select the previously categorical columns which got converted into numerical
-            )
+        train_df = train_df.with_columns(cs.string().cast(pl.Categorical))
+        for column in train_df.select(cs.categorical()).columns:
+            df_worked = train_df.drop_nulls(column) if not self.encode_nulls else train_df
+            df_worked = df_worked.group_by(column).agg(cs.numeric().mean())
             categories: list[str] = df_worked[column].to_list()
             values: list[float] = df_worked.drop(column).sum_horizontal().to_list()
             self._column_category_map[column] = {category: value for category, value in zip(categories, values)}
 
     @_check_4_str_cols
     def transform(self, target_df: pl.DataFrame) -> pl.DataFrame:
-        if self._column_category_map:
-            for column in self._column_category_map:
-                # The condition below, if True, implies the existence of categories in the to-be transformed "df" that didn't exist in the training data
-                if unseen_categories := (frozenset(target_df[column].unique()) - frozenset(self._column_category_map[column])):
-                    self._column_category_map[column] = self._column_category_map[column] | {unseen_category: 0.0 for unseen_category in unseen_categories}
-
-                target_df = target_df.with_columns(pl.col(column).cast(pl.Utf8).replace(self._column_category_map[column]).cast(pl.Float32))
-
-            return target_df
-
-        else:
+        if not self._column_category_map:
             raise RuntimeError(f'This {type(self).__name__} instance is not fitted yet. Call ".fit()" first before transforming.')
+
+        for column in self._column_category_map:
+            # The condition below, if True, implies the existence of categories in the to-be transformed "df" that didn't exist in the training data
+            seen_categories = frozenset(self._column_category_map[column])
+            if unseen_categories := [new_cat for new_cat in target_df[column].unique() if new_cat not in seen_categories]:
+                self._column_category_map[column] |= {unseen_category: 0.0 for unseen_category in unseen_categories}
+
+        replace_expr = (pl.col(column).cast(pl.String).replace(category_map).cast(pl.Float32) for column, category_map in self._column_category_map.items())
+        return target_df.with_columns(replace_expr)
 
     @_check_4_str_cols
     def fit_transform(self, df: pl.DataFrame) -> pl.DataFrame:
-        for column in (categorical_cols := df.select(cs.categorical()).columns):
-            if not self.encode_nulls:
-                df_worked = df.filter(pl.col(column).is_not_null())
-            else:
-                df_worked = df
-
-            df_worked = df_worked.group_by(column).agg(
-                (~cs.by_name(categorical_cols) & cs.numeric()).mean()  # do not select the previously categorical columns which got converted into numerical
-            )
-
-            categories: list[str] = df_worked[column].to_list()
-            values: list[float] = df_worked.drop(column).sum_horizontal().to_list()
-            self._column_category_map[column] = category_map = {category: value for category, value in zip(categories, values)}  # fit phase
-            df = df.with_columns(pl.col(column).cast(pl.Utf8).replace(category_map).cast(pl.Float32))  # transform phase (overwrite the column)
-
-        return df
+        self.fit(df)
+        return self.transform(df)
 
 
 type ColumnNames = tuple[str] | list[str] | str

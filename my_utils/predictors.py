@@ -5,21 +5,20 @@ from sklearn.inspection import permutation_importance
 from sklearn.ensemble import ExtraTreesRegressor
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
-from datetime import date
+from datetime import date, timedelta
 from tqdm import trange
-from rich import print
 import warnings
 
 
 def select_important_features(
-    x: pl.DataFrame,
-    y: pl.Series,
-    num_features_to_select: int = 3,
-    cv=5,
-    random_state: int = np.random.randint(100),
-    n_estimators: int = 50,
-    return_importance: bool = True,
-    n_repeats: int = 10,
+        x: pl.DataFrame,
+        y: pl.Series,
+        num_features_to_select: int = 3,
+        cv=5,
+        random_state: int = np.random.randint(100),
+        n_estimators: int = 50,
+        return_importance: bool = True,
+        n_repeats: int = 10,
 ):
     assert isinstance(x, pl.DataFrame), f"Expected a Polars dataframe, got {type(x)} instead."
 
@@ -76,7 +75,8 @@ class ExogArima:
         return future_forecast
 
 
-def predict_churn(df: pl.DataFrame, date_column: str, sort: bool = False) -> float:
+def predict_churn(df: pl.DataFrame, days_since_last_event :int, date_column: str, value_column: str = None, sort: bool = False) -> float:
+    # TODO: make the dates weighted by the amount of trxn (recent big trxn pulls date closer than small old txn)
     """
     Predicts a customer's probability of churning, given the dates of his events (e.g. transactional) history.
 
@@ -94,27 +94,37 @@ def predict_churn(df: pl.DataFrame, date_column: str, sort: bool = False) -> flo
     float
         The probability value [0, 1) of a customer churning.
     """
-    event_dates: pl.DataFrame = df[[date_column]]
+    if df.is_empty():
+        raise ValueError("Received an empty DataFrame; at least one row is required.")
+
+    if days_since_last_event <= 0:
+        return 0.
+
+    if value_column:
+        event_dates: pl.DataFrame = df[[date_column, value_column]]
+    else:
+        event_dates: pl.DataFrame = df[[date_column]]
+
     assert isinstance(event_dates.dtypes[0], (pl.Date, pl.Datetime)), f"Expected type {pl.Date, pl.Datetime}, got {event_dates.dtypes[0]} instead."
 
     if isinstance(event_dates.dtypes[0], pl.Datetime):
-        event_dates = event_dates.cast(pl.Date)
+        event_dates = event_dates.cast({date_column: pl.Date})
 
     if sort:  # the dataframe's date column MUST be sorted in ascending order!
         event_dates = event_dates.sort(date_column)
 
-    last_date: date = event_dates[-1].item()
-    today: date = date.today()
-    days_since_last_event: int = (today - last_date).days
-    if days_since_last_event == 0:
-        return 0.
+    event_dates = event_dates.group_by(date_column).sum()  # aggregate events that occurred on the same day
+    last_date: date = event_dates[-1, date_column]
+    query_date = last_date + timedelta(days=days_since_last_event)
 
-    event_dates: pl.DataFrame = event_dates.with_columns(
+    # today: date = date.today()
+    # days_since_last_event: int = (today - last_date).days
+
+    event_dates = event_dates.with_columns(
         pl.col(date_column).diff()
         .dt.total_days()
         .alias("dates_diff")
     )[1:]
-    event_dates = event_dates.filter(pl.col("dates_diff") != 0)  # remove events that occurred on the same day
 
     if event_dates.is_empty():  # if a single event occurred, or events all occurred on the same day:
         # TODO: maybe return a probability based on similar existing customers since we have no prior about this customer
@@ -123,7 +133,7 @@ def predict_churn(df: pl.DataFrame, date_column: str, sort: bool = False) -> flo
     if not event_dates["dates_diff"].var():  # if all event occurrences are evenly spaced (constant or single days value difference) ==> var ∈ {0, None}
         return days_since_last_event / (event_dates["dates_diff"][0] + days_since_last_event)
 
-    weights_exp: pl.Expr = (pl.lit(1.) / (today - pl.col(date_column)).dt.total_days())
+    weights_exp: pl.Expr = (pl.lit(1.) / (query_date - pl.col(date_column)).dt.total_days())
     event_dates = event_dates.with_columns(
         (weights_exp / weights_exp.sum())
         .alias("weights")
