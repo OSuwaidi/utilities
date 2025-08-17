@@ -1,4 +1,3 @@
 com.hiberbee.intellij.hiberbee-theme
 DBN
-com.vermouthx.xcode-theme
 izhangzhihao.rainbow.brackets
