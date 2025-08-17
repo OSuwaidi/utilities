@@ -13,7 +13,7 @@
 <u>To stage all changes (modifications and deletions) made to **tracked** files (not new), but leave _untracked_ files unstaged</u>:<br>
 `$ git add -u`
 
-<u>To stage all files having the an “.ext” extension</u>:<br>
+<u>To stage all files having an “.ext” extension</u>:<br>
 `$ git add \*.ext`
 
 <u>To stage all changes in the entire directory (current and all its subdirectories)</u>:<br>
@@ -77,7 +77,7 @@
 
 <u>If after `git pull` your local branch and remote branch have diverged, meaning they both have commits that the other doesn't have, you must reconcile</u>:<br>
 `$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull <origin main> --rebase`<br>
-(this will rebase your local changes on top of the remote changes, and will move your local commits to the tip (top) of the remote branch)
+(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping linear commit history)
 
 - Better to create a new branch first not to affect the main working branch, then after resolving conflicts (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
 

@@ -24,6 +24,7 @@ statsmodels
 scipy
 rich
 missingpy
+fastexcel  # for polars to read excel files
 opencv-python
 openai
 tqdm
