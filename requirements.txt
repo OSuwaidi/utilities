@@ -40,10 +40,6 @@ click==8.2.1
     # via
     #   nltk
     #   streamlit
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
 contourpy==1.3.3
     # via
     #   bokeh
@@ -86,7 +82,7 @@ joblib==1.5.1
     # via
     #   nltk
     #   scikit-learn
-jsonschema==4.25.0
+jsonschema==4.25.1
     # via altair
 jsonschema-specifications==2025.4.1
     # via jsonschema
@@ -143,7 +139,7 @@ numpy==2.2.6
     #   scipy
     #   statsmodels
     #   streamlit
-openai==1.99.9
+openai==1.101.0
     # via -r requirements.in
 opencv-python==4.12.0.88
     # via -r requirements.in
@@ -159,7 +155,7 @@ packaging==25.0
     #   streamlit
 palettable==3.3.3
     # via lets-plot
-pandas==2.3.1
+pandas==2.3.2
     # via
     #   bokeh
     #   panel
@@ -223,8 +219,6 @@ pytz==2025.2
     # via pandas
 pyviz-comms==3.0.6
     # via panel
-pywin32==311
-    # via pympler
 pyyaml==6.0.2
     # via bokeh
 referencing==0.36.2
@@ -233,7 +227,7 @@ referencing==0.36.2
     #   jsonschema-specifications
 regex==2025.7.34
     # via nltk
-requests==2.32.4
+requests==2.32.5
     # via
     #   hummingbird
     #   panel
@@ -247,7 +241,7 @@ rpds-py==0.27.0
     # via
     #   jsonschema
     #   referencing
-ruff==0.12.9
+ruff==0.12.10
     # via -r requirements.in
 scikit-learn==1.7.1
     # via
@@ -316,13 +310,13 @@ uc-micro-py==1.0.3
 urllib3==2.5.0
     # via requests
 watchdog==6.0.0
-    # via
-    #   -r requirements.in
-    #   streamlit
+    # via -r requirements.in
 watchfiles==1.1.0
     # via -r requirements.in
 webencodings==0.5.1
     # via bleach
+xlsxwriter==3.2.5
+    # via -r requirements.in
 xyzservices==2025.4.0
     # via bokeh
 yarg==0.1.10
