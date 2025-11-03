@@ -10,9 +10,6 @@
     - `-iname`: case-insensitive name match
     - `*`: wildcard to match anything
     - `-type`: `f` for files, or `d` for directories (if none, matches both)
-- `gci -r -<{file, directory}> <*.ext>`
-  - pwsh7 equivalent to `find`; `gci`: Get-ChildItem
-  - `-r`: recursively finds matching files/directories within every subdirectory from root `.`
 - `find "some/path/to/dir" -(i)name "<some_name*>" -type <{f, d}> -exec rm -r {} +`
     - `-exec ... {}` specifies the function (`rm` in this case) to run against all matched files/dirs
     - `-r`: recursively removes all matched files/dirs in **batch mode**

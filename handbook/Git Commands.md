@@ -31,7 +31,7 @@
 <u>To print a list of all currently tracked files in your git repo</u>:<br>
 `$ git ls-files`
 
-<u>To stop tracking a file and remove it from remote repo while keeping it in your local directory</u>:<br>
+<u>To stop tracking a file and remove it from remote repo (remove from Git index) while keeping it in your local directory</u>:<br>
 `$ git rm --cached -r <file_name.ext>`<br>
 (the `-r` option is used to *recursively* remove files in a directory)<br>
 (the `—cached` option ensures that the files are only removed from the Git index (staging area), not your local file system)
@@ -75,17 +75,22 @@
 <u>To pull the latest changes from the remote repository (to stay up to date and avoid conflicts)</u>:<br>
 `$ git pull <origin> main` <==> `git fetch` followed by `git merge`
 
-<u>If after `git pull` your local branch and remote branch have diverged, meaning they both have commits that the other doesn't have, you must reconcile</u>:<br>
-`$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull <origin main> --rebase`<br>
-(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping linear commit history)
+<u>To create and switch to a new branch</u>:
+`$ git checkout -b <branch_name>`<br>
 
-- Better to create a new branch first not to affect the main working branch, then after resolving conflicts (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
+<u>If the local branch and remote branch have diverged (progressed independently) ==> they have commits that the other doesn't have, you must reconcile</u>:<br>
+`$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull --rebase <origin> main`<br>
+(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping *linear* commit history)
+
+- While resolving divergence (via `rebase` or `merge`), a conflict might arise if both branches modified the same lines in the same file
+
+- Better to create a new branch first not to affect the main working branch, then after resolving conflicts in the new branch (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
 
 <u>To disconnect your local repository from a remote one</u>:<br>
 `$ git remote rm <origin>`
 
 <u>To check available branches and which one are you're currently on in the repo</u>:<br>
-`$ git branch`<br>
+`$ git branch`
 
 <u>To list all available remote branches (better to `git fetch` first)</u>:
 `$ git branch -r`
@@ -94,7 +99,7 @@
 `$ git branch -a`
 
 <u>To rename a branch (useful to match local repo's branch name with remote's for direct push/pull)</u>:<br>
-`$ git branch -m <old_name> <new_name>
+`$ git branch -m <old_name> <new_name>`
 
 <u>To push into a remote branch that has a different name than the current local branch</u>:<br>
 `$ git push <origin> <local_branch>:<remote_branch>`
@@ -111,7 +116,6 @@
 
 <u>To switch into a different branch (which will consequently update your CWD and its files)</u>:<br>
 `$ git checkout <branch_name>`<br>
-(adding the `-b` option after the `checkout` keyword in the command will create a *new* branch with that name if the branch doesn't already exist in the repo)
 
 <u>To push all changes from your local repository to the remote repository</u>:<br>
 `$ git push -u origin main`<br>
