@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"  # which tool should be used as the buil
 
 [project]
 name = "my-utils"  # package name (label) exposed to PyPI and pip (imported as "my_utils", corresponding to the actual module's (folder) name in the "utilities" package/repo)
-version = "0.1.7"  # must update version number here to reflect repo updates from "pip install ..."
+version = "0.1.8"  # must update version number here to reflect repo updates from "pip install ..."
 authors = [{ name = "Omar", email = "omar.ali.alsuwaidi@gmail.com" }]
 description = "A versatile Python utility library for efficient data ingestion, preprocessing, post-processing, and wrangling."
 classifiers = [
@@ -13,7 +13,7 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "hummingbird",
+#    "hummingbird",
     "lets_plot",
     "numpy",
     "panel",
