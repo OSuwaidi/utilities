@@ -28,6 +28,7 @@ numpy
 bkmeans
 scikit-learn
 statsmodels
+python-dotenv
 scipy
 rich
 missingpy

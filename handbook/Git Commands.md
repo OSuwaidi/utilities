@@ -33,7 +33,7 @@
 
 <u>To stop tracking a file and remove it from remote repo (remove from Git index) while keeping it in your local directory</u>:<br>
 `$ git rm --cached -r <file_name.ext>`<br>
-(the `-r` option is used to *recursively* remove files in a directory)<br>
+(the `-r` option is used to _recursively_ remove files in a directory)<br>
 (the `—cached` option ensures that the files are only removed from the Git index (staging area), not your local file system)
 
 <u>To keep a file unchanged in the remote repo (never pushed) while allowing local changes</u>:
@@ -47,7 +47,7 @@
 <u>To commit changes from your staging area to your _local_ repository</u>:<br>
 `$ git commit -m “Some message to display with commit”`
 
-<u>To add **and** commit all tracked files (modified or deleted) in one step</u>:<br>
+<u>To add/stage **and** commit all _tracked_ files (modified or deleted) in one step</u>:<br>
 `$ git commit -am “<Some message to display with commit>”`
 
 <u>To create annotated tags (package versions) and associate them with your commits</u>:<br>
@@ -58,7 +58,7 @@
 `$ git gc`
 
 <u>To connect your local repository to a remote one via URL</u>:<br>
-`$ git remote add <origin> <remote_repo_url>.git`<br>
+`$ git remote add <origin> <remote_repo_url>`<br>
 (`origin` is an **alias** for the URL of the remote repository, such that you don't have to type it again; you can name it whatever you want)<br>
 (to change the name of the alias reference: `$ git remote rename origin <new_name>`)
 
@@ -80,7 +80,7 @@
 
 <u>If the local branch and remote branch have diverged (progressed independently) ==> they have commits that the other doesn't have, you must reconcile</u>:<br>
 `$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull --rebase <origin> main`<br>
-(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping *linear* commit history)
+(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping _linear_ commit history)
 
 - While resolving divergence (via `rebase` or `merge`), a conflict might arise if both branches modified the same lines in the same file
 
@@ -133,7 +133,7 @@
 
 <u>If submodule is a forked repo (tracks changes/updates from its original repo; **upstream**), make sure its updated</u>:<br>
 `$ git checkout main` --> `$ git pull <upstream> <main>`
-(after you make commits and push changes from within a submodule, you must then commit the (updated) submodule itself from the root directory 
+(after you make commits and push changes from within a submodule, you must then commit the (updated) submodule itself from the root directory
 `$ cd ..` -> `$ git commit -am 'update submodule'`)
 
 <u>To push large files (e.g., CSV), you need to use Git LFS</u>:<br>

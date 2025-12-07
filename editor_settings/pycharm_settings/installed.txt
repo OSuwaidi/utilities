@@ -1,3 +1,0 @@
-com.hiberbee.intellij.hiberbee-theme
-DBN
-izhangzhihao.rainbow.brackets
