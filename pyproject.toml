@@ -13,8 +13,8 @@ classifiers = [
 ]
 requires-python = ">=3.9"
 dependencies = [
-#    "hummingbird",
-    "lets_plot",
+   # "hummingbird",
+    # "lets_plot",
     "numpy",
     "panel",
     "param",

@@ -21,9 +21,9 @@ MissForest
 ruff
 matplotlib
 streamlit
-streamlit_letsplot
+# streamlit_letsplot
 watchdog
-lets-plot
+# lets-plot
 numpy
 bkmeans
 scikit-learn
