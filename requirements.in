@@ -1,7 +1,6 @@
 # First install: $ pip install -U pip-tools
 # To compile this file: `$ pip-compile requirements.in -o requirements.txt`
 # To update an already compiled "requirements.txt" file: `$ pip-compile --upgrade requirements.in`
-# To use `pipreqs`: `$ pipreqs /path/to/your/project` to generate a "requirements.txt" with the detected non-standard libraries
 
 # To install this (utilities) library: `$ pip install git+https://github.com/OSuwaidi/utilities.git@main`
 # To update it to latest version: `$ pip install -U git+https://github.com/OSuwaidi/utilities.git@main`
@@ -39,7 +38,7 @@ tqdm
 nltk
 tabulate
 pyodbc
-pipreqs
+pipreqs  # To use: `$ pipreqs /path/to/your/project` to generate a "requirements.txt" with the detected non-standard libraries
 pympler
 pip-review
 git+https://github.com/OSuwaidi/utilities.git@main
