@@ -1,6 +1,6 @@
 # Windows WSL
 
-Windows Subsystem for Linex (WSL) is a compatibility layer for Linux binaries to run directly on Windows (via a Linux kernel).
+Windows Subsystem for Linux (WSL) is a compatibility layer for Linux binaries to run directly on Windows (via a Linux kernel).
 Installed via: `$ wsl --install`
 
 Some good base package installations:
