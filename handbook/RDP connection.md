@@ -1,0 +1,7 @@
+- To remotely connect to a Windows 11 host machine from your local client, rely on the remote host's alphabetic **hostname** rather than its numeric IP address.
+- While you *can* use the host's IPv4 address for remote connection, it's subject to change (variable) because the router dynamically (re)assigns IP addresses (via DHCP) to the PC.
+- To get a stable IP address, you'd need to request IT to reserve the same IP address for the PC, either via a **static** IP (configured manually on PC) or request a **DHCP Reservation**.
+- To get the PC's hostname: `$ hostname`. However, this is sometimes not **sufficient** as the VPN might not know which sub-network to search (other PC's can share the same hostname but with a different DNS Suffix).
+- To resolve the ambiguity, the most robust usage for remote connection is the **Fully Qualified Domain Name (FQDN)**: which is the hostname combined with the Primary DNS Suffix using a dot:
+  - FQDN = `{hostname}.{Primary DNS Suffix}` (DNS servers automatically updates to link PC's Hostname/FQDN to new IP)
+- Both can be found via `$ ipconfig /all`
