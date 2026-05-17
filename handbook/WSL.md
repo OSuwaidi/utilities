@@ -1,9 +1,12 @@
 # Windows WSL
 
-Windows Subsystem for Linux (WSL) is a compatibility layer for Linux binaries to run directly on Windows (via a Linux kernel).
+Windows Subsystem for Linux (WSL) is a compatibility layer (environment) for Linux binaries to run directly on Windows (via a Linux kernel).
 Installed via: `$ wsl --install`
 
-Some good base package installations:
+Note: to update all packages/applications simultaneously:\
+`$ winget upgrade --all --silent --accept-package-agreements --accept-source-agreements`
+
+Some essential base package installations:
 
 ```bash
 # update package index and upgrade installed ones
@@ -29,10 +32,10 @@ The local data stored on your machine is also shared and **synced** within the L
 `$ /mnt/c/Users/<Windows_username>/...`,
 where `mnt/` is the mount point to access the Windows file system.
 
-However, when running scripts in WSL, it's advisable to move pertinent directories/files from the mounted drive into the home directory in WSL. This allows for faster read and write access.
+However, when running scripts in WSL, it's advisable to move pertinent directories/files/datasets from the mounted drive into the home directory in WSL. This allows faster read and write access.
 
-But then, how do we modify the files directly within the WSL environment?
+But then, how do we edit the script files directly within the WSL environment?
 
 1. Install VS Code or Zed Editor locally (on Windows) and install the WSL extension
 2. In WSL CLI (Ubuntu), navigate toward the project directory and run `$ code .` or `$ zed .`
-3. Now you can modify files in Ubuntu directly from your IDE running locally on Windows
+3. Now you can edit files in Ubuntu directly from your IDE running locally on Windows
