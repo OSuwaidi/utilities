@@ -22,6 +22,8 @@
 <u>To stage modified files by referring to their index number as they show up in `git status`</u>:<br>
 `$ git add -i`
 
+- Note: `$git stash` works similarily to `git add` but instead of staging the files, it "stashes" them temporarily such that you can pull without issues.
+
 <u>To remove a staged file from the staging area (unstage a file)</u>:<br>
 `$ git reset some_file.py`
 
@@ -115,7 +117,7 @@
 
 <u>If the local branch and remote branch have a diverged commit history (progressed independently) ==> they have commits that the other doesn't have; you must reconcile</u>:<br>
 - While resolving divergence (via `rebase` or `merge`), a **conflict** might arise if both branches **modified the same line(s) in the same file**
-- Before addressing the conflict (same file, different contents), your change(s) must be locally comitted first.
+- Before addressing the conflict (same file, different contents), your change(s) must be locally committed first.
 - After you address the conflict, you stage (`add`) that file again and commit to conclude the merge.
 - Better to create a new branch first not to affect the main working branch, then after resolving conflicts in the new branch (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
 
