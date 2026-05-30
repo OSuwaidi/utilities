@@ -72,23 +72,6 @@
 <u>To show any commits made to the remote branch but not your local branch</u>:<br>
 `$ git log HEAD..origin/main`
 
-<u>To pull the latest changes from the remote repository (to stay up to date and avoid conflicts)</u>:<br>
-`$ git pull <origin> main` <==> `git fetch` followed by `git merge`
-
-<u>To create and switch to a new branch</u>:
-`$ git checkout -b <branch_name>`<br>
-
-<u>If the local branch and remote branch have diverged (progressed independently) ==> they have commits that the other doesn't have, you must reconcile</u>:<br>
-`$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull --rebase <origin> main`<br>
-(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping _linear_ commit history)
-
-- While resolving divergence (via `rebase` or `merge`), a conflict might arise if both branches modified the same lines in the same file
-
-- Better to create a new branch first not to affect the main working branch, then after resolving conflicts in the new branch (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
-
-<u>To disconnect your local repository from a remote one</u>:<br>
-`$ git remote rm <origin>`
-
 <u>To check available branches and which one are you're currently on in the repo</u>:<br>
 `$ git branch`
 
@@ -111,8 +94,9 @@
 `$ git branch -vv`<br>
 (each local branch can have its own upstream)
 
-<u>To have the current local branch track a particular remote branch (become its upstream)</u>:<br>
-`$ git branch -u <upstream>/<branch_name>`
+<u>To have the current local branch *track* a particular remote branch (become its upstream)</u>:<br>
+`$ git branch -u <origin>/<branch_name>`
+(`-u` flag stands for `--set-upstream-to`)
 
 <u>To switch into a different branch (which will consequently update your CWD and its files)</u>:<br>
 `$ git checkout <branch_name>`<br>
@@ -121,6 +105,23 @@
 `$ git push -u origin main`<br>
 (the `-u` is there that such Git will remember that you want your **local** `main` branch to track the `main` branch from repo `origin`)<br>
 (you only need to specify `-u origin main` the first time, then you can just `git push` or `pull` directly)
+
+<u>To create and switch to a new branch</u>:
+`$ git checkout -b <branch_name>`<br>
+
+<u>To pull the latest changes from the remote repository (to stay up to date and avoid conflicts)</u>:<br>
+`$ git pull <origin> main` <==> `git fetch` followed by `git merge`
+
+<u>If the local branch and remote branch have diverged (progressed independently) ==> they have commits that the other doesn't have, you must reconcile</u>:<br>
+`$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull --rebase <origin> main`<br>
+(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping _linear_ commit history)
+
+- While resolving divergence (via `rebase` or `merge`), a conflict might arise if both branches modified the same lines in the same file
+
+- Better to create a new branch first not to affect the main working branch, then after resolving conflicts in the new branch (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
+
+<u>To disconnect your local repository from a remote one</u>:<br>
+`$ git remote rm <origin>`
 
 <u>To create a Git submodule (nested repo) within the current repo in a specified path</u>:<br>
 `$ git submodule add <remote_repo_url> <path/to/subdirectory>`
