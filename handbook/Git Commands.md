@@ -110,14 +110,13 @@
 `$ git checkout -b <branch_name>`<br>
 
 <u>To pull the latest changes from the remote repository (to stay up to date and avoid conflicts)</u>:<br>
-`$ git pull <origin> main` <==> `git fetch` followed by `git merge`
+`$ git pull <origin> main` <==> `git fetch` followed by `git merge`  (optionally `--rebase`)<br>
+(rebase places local changes *on top* of the remote changes; local commits are moved to the top of the remote branch, keeping _linear_ commit history)
 
-<u>If the local branch and remote branch have diverged (progressed independently) ==> they have commits that the other doesn't have, you must reconcile</u>:<br>
-`$ git pull --rebase` or if no branch is set as upstream (`-u`), then: `git pull --rebase <origin> main`<br>
-(this will rebase your local changes on top of the remote changes; moves your local commits to the tip (top) of the remote branch, keeping _linear_ commit history)
-
-- While resolving divergence (via `rebase` or `merge`), a conflict might arise if both branches modified the same lines in the same file
-
+<u>If the local branch and remote branch have a diverged commit history (progressed independently) ==> they have commits that the other doesn't have; you must reconcile</u>:<br>
+- While resolving divergence (via `rebase` or `merge`), a **conflict** might arise if both branches **modified the same line(s) in the same file**
+- Before addressing the conflict (same file, different contents), your change(s) must be locally comitted first.
+- After you address the conflict, you stage (`add`) that file again and commit to conclude the merge.
 - Better to create a new branch first not to affect the main working branch, then after resolving conflicts in the new branch (selecting appropriate changes from local and remote commits) and removing the conflict markers, add the resolved file(s) to the staging area and commit the merge. Finally, merge the updated branch back to your main branch via: `$ git checkout main` --> `$ git merge <new-branch>` then delete the new branch: `$ git branch -d <new-branch>`
 
 <u>To disconnect your local repository from a remote one</u>:<br>
