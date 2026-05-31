@@ -33,8 +33,8 @@
 <u>To print a list of all currently tracked files in your git repo</u>:<br>
 `$ git ls-files`
 
-<u>To stop tracking a file and remove it from remote repo (remove from Git index) while keeping it in your local directory</u>:<br>
-`$ git rm --cached -r <file_name.ext>`<br>
+<u>To stop tracking (untrack) a file/folder and remove it from remote repo (remove from Git index) while keeping it in your local directory</u>:<br>
+`$ git rm --cached -r {file_name.ext, folder_name}`<br>
 (the `-r` option is used to _recursively_ remove files in a directory)<br>
 (the `—cached` option ensures that the files are only removed from the Git index (staging area), not your local file system)
 
