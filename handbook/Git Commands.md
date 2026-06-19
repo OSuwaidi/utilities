@@ -74,21 +74,26 @@
 <u>To show any commits made to the remote branch but not your local branch</u>:<br>
 `$git log HEAD..origin/main`
 
-<u>To create and switch to a new branch</u>:
+<u>To create and switch to a new branch</u>:\
 `$git checkout -b <branch_name>`<br>
 - Make sure to commit your changes on the current branch before creating/switching to a new one!
 
 <u>To check available branches and which one are you're currently on in the repo</u>:<br>
 `$git branch`
 
-<u>To list all available remote branches (do `git fetch` first)</u>:
+<u>To list all available remote branches (do `git fetch` first)</u>:\
 `$git branch -r`
 
-<u>To list all available local and remote branches</u>:
+<u>To list all available local and remote branches</u>:\
 `$git branch -a`
 
 <u>To rename a branch (useful to match local repo's branch name with remote's for direct push/pull)</u>:<br>
 `$git branch -m <old_name> <new_name>`
+
+<u>To copy over all changes from a feature branch into the `main` branch:</u>
+- First, you must commit your changes on the feature branch
+- Checkout the `main` branch before running the merge
+- `$git merge <feature-branch>`
 
 <u>To push into a remote branch that has a different name than the current local branch</u>:<br>
 `$git push <origin> <local_branch>:<remote_branch>`
