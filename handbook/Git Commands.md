@@ -56,7 +56,7 @@
 `$git tag -a v0.1.0 -m "<some_message>"` -> `$git push --follow-tags`\
 (running `git push --tags` will **only** push the tags, without the commits)
 
-<u>To optimize the local repository by cleaning up (garbage collecting) unnecessary files and optimizing the local storage of the repository data</u>:<br>
+<u>To optimize the local repository by garbage collecting unnecessary files and optimizing the local storage of the repository data</u>:<br>
 `$git gc`
 
 <u>To connect your local repository to a remote one via URL</u>:<br>
@@ -75,7 +75,7 @@
 `$git log HEAD..origin/main`
 
 <u>To create and switch to a new branch</u>:\
-`$git checkout -b <branch_name>`<br>
+`$git checkout -b <branch_name>` or `$git switch -c <branch_name>`<br>
 - Make sure to commit your changes on the current branch before creating/switching to a new one!
 
 <u>To check available branches and which one are you're currently on in the repo</u>:<br>
