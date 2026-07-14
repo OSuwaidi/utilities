@@ -100,7 +100,12 @@
 
 <u>To delete a branch that you're not currently on</u>:<br>
 `$git branch -d <branch_name>`
-- Then to push the deletion to the remote rep: `git push <origin> :<branch_name>`, where `:` means *push "nothing"*
+
+<u>Then to push the branch deletion to the remote repo:</u>\
+`$git push <origin> --delete <branch_name>` or `$git push <origin> :<branch_name>`, where `:` means *push "nothing"*
+
+<u>To pull the branch deletion commit:</u>\
+`$git fetch <origin> --prune`
 
 <u>To check which remote repo/branch is set as the upstream (being tracked) for current local branch</u>:<br>
 `$git branch -vv`<br>
