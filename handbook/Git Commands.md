@@ -39,7 +39,7 @@
 (the `—cached` option ensures that the files are only removed from the Git index (staging area), not your local file system)
 
 <u>To keep a file unchanged (frozen) in the remote repo (never push changes) while allowing local changes</u>:\
-`$git update-index --assume-unchanged <file.ext>`
+`$git update-index --skip-worktree <file.ext>`
 
 <u> To set a name and email (author) for each commit globally (for all repos on machine)</u>:
 
