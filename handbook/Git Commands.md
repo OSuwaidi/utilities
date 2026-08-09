@@ -38,8 +38,11 @@
 (the `-r` option is used to _recursively_ remove files in a directory)<br>
 (the `—cached` option ensures that the files are only removed from the Git index (staging area), not your local file system)
 
-<u>To keep a file unchanged (frozen) in the remote repo (never push changes) while allowing local changes</u>:\
+<u>To ignore local changes to a tracked file, keeping it unchanged (frozen) and not push its changes to the remote repo</u>:\
 `$git update-index --skip-worktree <file.ext>`
+
+<u>To start tracking changes again to the previously skipped file</u>:\
+`$git update-index --no-skip-worktree <file.ext>`
 
 <u> To set a name and email (author) for each commit globally (for all repos on machine)</u>:
 
