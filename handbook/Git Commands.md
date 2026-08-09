@@ -44,6 +44,9 @@
 <u>To start tracking changes again to the previously skipped file</u>:\
 `$git update-index --no-skip-worktree <file.ext>`
 
+<u>To clone only a single branch without the entire commit history (shallow clone)</u>:\
+`$git clone -b <branch_name> --single-branch --depth 1 <repo_url>`
+
 <u> To set a name and email (author) for each commit globally (for all repos on machine)</u>:
 
     $git config --global user.name "Your Name"
